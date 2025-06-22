@@ -1,0 +1,30 @@
+{
+  "name": "resolvenow",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BhuvanChatti/ResolveNow.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BhuvanChatti/ResolveNow/issues"
+  },
+  "homepage": "https://github.com/BhuvanChatti/ResolveNow#readme",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "mongoose": "^8.16.0",
+    "node": "^24.2.0",
+    "nodemon": "^3.1.10"
+  }
+}
