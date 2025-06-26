@@ -1,17 +1,12 @@
-const express = require("express");
-const cors = require("cors");
-require("./config");
-const {
-  ComplaintSchema,
-  UserSchema,
-  AssignedComplaint,
-  MessageSchema,
-} = require("./Schema");
+import express, { json } from "express";
+import cors from "cors";
+import "./config.js";
+import { ComplaintSchema, UserSchema, AssignedComplaint, MessageSchema } from "./Schema.js";
 const app = express();
 const PORT = 8000;
 
 /**************************************** */
-app.use(express.json());
+app.use(json());
 app.use(cors());
 /********************************************** */
 

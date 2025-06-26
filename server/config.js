@@ -1,4 +1,4 @@
-import mongoose from ("mongoose");
+import mongoose from "mongoose";
 
 mongoose.connect("mongodb+srv://bhuvanchatti579:999999999@resolvenow.cp5zsxv.mongodb.net/")
 .then(()=>{
