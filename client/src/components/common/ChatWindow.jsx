@@ -1,75 +1,93 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
+const ChatWindow = ({ complaintId, name }) => {
+  const [messageInput, setMessageInput] = useState('');
+  const [messageList, setMessageList] = useState([]);
 
-const ChatWindow = (props) => {
-   const [messageInput, setMessageInput] = useState('');
+  const messageWindowRef = useRef(null);
 
-   const messageWindowRef = useRef(null);
-   const [messageList, setMessageList] = useState([]);
+  // Fetch messages from server
+  const fetchMessageList = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8000/messages/${complaintId}`);
+      setMessageList(response.data);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    }
+  };
 
-   const fetchMessageList = async () => {
-      try {
-         const response = await axios.get(`http://localhost:8000/messages/${props.complaintId}`);
-         setMessageList(response.data);
-      } catch (error) {
-         console.error('Error fetching messages:', error);
-      }
-   };
+  // Fetch messages when component mounts or complaintId changes
+  useEffect(() => {
+    fetchMessageList();
+    // Optionally poll for new messages every 10 seconds
+    const interval = setInterval(fetchMessageList, 10000);
+    return () => clearInterval(interval);
+  }, [complaintId]);
 
-   useEffect(() => {
-      fetchMessageList(props.complaintId, setMessageList);
-   }, [props.complaintId]);
+  // Scroll to bottom on new messages
+  useEffect(() => {
+    scrollToBottom();
+  }, [messageList]);
 
-   useEffect(() => {
-      scrollToBottom();
-   }, [messageList]);
+  const scrollToBottom = () => {
+    if (messageWindowRef.current) {
+      messageWindowRef.current.scrollTop = messageWindowRef.current.scrollHeight;
+    }
+  };
 
+  // Send new message
+  const sendMessage = async () => {
+    if (!messageInput.trim()) return;
 
-   const sendMessage = async () => {
-      try {
-         let data = {
-            name: props.name,
-            message: messageInput,
-            complaintId: props.complaintId
-         }
-         const response = await axios.post('http://localhost:8000/messages', data)
-         setMessageList([...messageList, response.data]);
-         setMessageInput('');
-         fetchMessageList();
-      } catch (error) {
-         console.error('Error sending message:', error);
-      }
-   }
+    try {
+      const data = {
+        name,
+        message: messageInput,
+        complaintId,
+      };
 
-   const scrollToBottom = () => {
-      if (messageWindowRef.current) {
-         messageWindowRef.current.scrollTop = messageWindowRef.current.scrollHeight;
-      }
-   };
+      const response = await axios.post('http://localhost:8000/messages', data);
+      setMessageList((prev) => [...prev, response.data]);
+      setMessageInput('');
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  };
 
-   return (
-      <>
-         <div className="chat-container">
-            <h1>Message Box</h1>
-            <div className="message-window" ref={messageWindowRef}>
-               {messageList.slice().reverse().map((msg) => (
-                  <div className="message" key={msg._id}>
-                     <p>{msg.name}: {msg.message}</p>
-                     <p style={{ fontSize: '10px', marginTop: '-15px' }}>{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}, {new Date(msg.createdAt).toLocaleDateString()}</p>
-                  </div>
-               ))}
-            </div>
-            <div className="input-container">
-               {/* <input required type="text" placeholder="Message" value={messageInput} onChange={(e) => setMessageInput(e.target.value)} /> */}
-               <textarea required type="text" placeholder="Message" value={messageInput} onChange={(e) => setMessageInput(e.target.value)}></textarea>
-               <button className='btn btn-success' onClick={sendMessage}>Send</button>
-            </div>
+  return (
+    <div className="chat-container">
+      <h5 className="text-primary mb-2">Message Box</h5>
 
-         </div>
+      <div className="message-window mb-2" ref={messageWindowRef}>
+        {messageList.slice().reverse().map((msg) => (
+          <div className="message bg-light p-2 rounded mb-2" key={msg._id}>
+            <p className="mb-1">
+              <strong>{msg.name}:</strong> {msg.message}
+            </p>
+            <p className="text-muted small mb-0">
+              {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}, 
+              {' ' + new Date(msg.createdAt).toLocaleDateString()}
+            </p>
+          </div>
+        ))}
+      </div>
 
+      <div className="input-container d-flex flex-column">
+        <textarea
+          className="form-control mb-2"
+          placeholder="Type your message..."
+          value={messageInput}
+          onChange={(e) => setMessageInput(e.target.value)}
+          rows={2}
+          required
+        />
+        <button className="btn btn-success" onClick={sendMessage}>
+          Send
+        </button>
+      </div>
+    </div>
+  );
+};
 
-      </>)
-}
-
-export default ChatWindow
+export default ChatWindow;

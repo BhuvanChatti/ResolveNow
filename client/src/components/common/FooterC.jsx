@@ -1,14 +1,24 @@
 import React from 'react';
 import { MDBFooter } from 'mdb-react-ui-kit';
+import '../../index.css';
+import '../../App.css';
+
 
 export default function FooterC() {
   return (
-    <MDBFooter style={{height: '112px', marginTop: '101px'}} bgColor='dark' className='text-center text-lg-left'>
-      <div className='text-center p-3'>
-        <p className='text-light'>
-          ComplaintCare
-        </p>
-        <p className='text-light'>&copy; {new Date().getFullYear()}</p>
+    <MDBFooter
+      style={{
+        height: 'auto',
+        marginTop: '80px',
+        backgroundColor: '#0B5ED7',
+        color: '#fff',
+        padding: '20px 0',
+      }}
+      className='text-center'
+    >
+      <div className='p-2'>
+        <h5 style={{ fontWeight: '600', marginBottom: '8px' }}>ComplaintCare</h5>
+        <p style={{ marginBottom: '0' }}>&copy; {new Date().getFullYear()} All rights reserved.</p>
       </div>
     </MDBFooter>
   );

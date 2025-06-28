@@ -1,6 +1,6 @@
 import "./App.css";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 import HomePage from "./components/user/HomePage";
 import Login from "./components/common/Login";
@@ -14,27 +14,30 @@ import Home from "./components/common/Home";
 import AgentInfo from "./components/admin/AgentInfo";
 
 function App() {
-  const isLoggedIn = !!localStorage.getItem("user");
+  const user = JSON.parse(localStorage.getItem("user"));
+  const isLoggedIn = !!user;
+
   return (
     <div className="App">
       <Router>
         <Routes>
-          <Route exact path="/" element={<Home />} />
+          <Route path="/" element={<Home />} />
           <Route path="/Login" element={<Login />} />
           <Route path="/SignUp" element={<SignUp />} />
+
           {isLoggedIn ? (
             <>
               <Route path="/AgentInfo" element={<AgentInfo />} />
               <Route path="/AgentHome" element={<AgentHome />} />
               <Route path="/UserInfo" element={<UserInfo />} />
-              <Route path="/AgentHome" element={<AgentHome />} />
               <Route path="/AdminHome" element={<AdminHome />} />
               <Route path="/Homepage" element={<HomePage />} />
               <Route path="/Complaint" element={<Complaint />} />
               <Route path="/Status" element={<Status />} />
             </>
           ) : (
-            <Route to="/Login" />
+            // Redirect unauthenticated users to login
+            <Route path="*" element={<Navigate to="/Login" />} />
           )}
         </Routes>
       </Router>
