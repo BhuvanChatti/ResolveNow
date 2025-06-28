@@ -1,7 +1,7 @@
 
 import axios from 'axios';
 import React, { useState } from 'react';
-import {Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Footer from './FooterC'
@@ -28,17 +28,21 @@ const Login = () => {
             const { userType } = isLoggedIn
             switch (userType) {
                case "Admin":
-                  navigate("/AdminHome")
+                  navigate("/AdminHome", { replace: true });
+                  window.location.reload();
                   break;
                case "Ordinary":
-                  navigate("/HomePage")
+                  navigate("/HomePage", { replace: true });
+                  window.location.reload();
                   break;
                case "Agent":
-                  navigate("/AgentHome")
+                  navigate("/AgentHome", { replace: true });
+                  window.location.reload();
                   break;
 
                default:
-                  navigate("/Login")
+                  navigate("/Login", { replace: true });
+                  window.location.reload();
                   break;
             }
          })
@@ -65,7 +69,7 @@ const Login = () => {
                   </li>
                   <li className="nav-item mb-2">
                      <Link
-                     to={'/signup'}
+                        to={'/signup'}
                         className={`nav-link text-light `}
                      >
                         SignUp
@@ -73,7 +77,7 @@ const Login = () => {
                   </li>
                   <li className="nav-item mb-2">
                      <Link
-                     to={'/login'}
+                        to={'/login'}
                         className={`nav-link text-light `}
                      >
                         Login
@@ -113,7 +117,7 @@ const Login = () => {
                </div>
             </div>
          </section>
-         <Footer/>
+         <Footer />
       </>
    );
 };
