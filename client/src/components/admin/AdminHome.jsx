@@ -1,92 +1,94 @@
-
-import '../../index.css';
-
-import '../../App.css';
 import React, { useEffect, useState } from 'react';
-import { useNavigate, NavLink } from 'react-router-dom';
-import Container from 'react-bootstrap/Container';
-import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
 import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 import UserInfo from './UserInfo';
 import AccordionAdmin from "./AccordionAdmin";
 import AgentInfo from './AgentInfo';
 
 const AdminHome = () => {
-  const navigate = useNavigate();
-  const [activeComponent, setActiveComponent] = useState('dashboard');
-  const [userName, setUserName] = useState('');
+   const navigate = useNavigate();
+   const [activeComponent, setActiveComponent] = useState('dashboard');
 
-  useEffect(() => {
-    const getUserData = () => {
-      try {
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (user) {
-          setUserName(user.name || 'Admin');
-        } else {
-          navigate('/');
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    getUserData();
-  }, [navigate]);
+   const [userName, setUserName] = useState('');
 
-  const handleNavClick = (componentName) => {
-    setActiveComponent(componentName);
-  };
 
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    navigate('/');
-  };
+   useEffect(() => {
+      const getData = async () => {
+         try {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (user) {
+               const { name } = user;
+               setUserName(name);
+            } else {
+               navigate('/');
+            }
+         } catch (error) {
+            console.log(error);
+         }
+      };
+      getData();
+   }, [navigate]);
 
-  return (
-    <>
-      <Navbar bg="dark" expand="lg" className="admin-navbar text-white py-3">
-        <Container fluid>
-          <Navbar.Brand className="text-white fw-bold">Welcome Admin, {userName}</Navbar.Brand>
-          <Navbar.Toggle aria-controls="admin-navbar-nav" />
-          <Navbar.Collapse id="admin-navbar-nav">
-            <Nav className="me-auto">
-              <Nav.Link
-                as="span"
-                onClick={() => handleNavClick('dashboard')}
-                className={`nav-tab ${activeComponent === 'dashboard' ? 'active-tab' : ''}`}
-              >
-                Dashboard
-              </Nav.Link>
-              <Nav.Link
-                as="span"
-                onClick={() => handleNavClick('UserInfo')}
-                className={`nav-tab ${activeComponent === 'UserInfo' ? 'active-tab' : ''}`}
-              >
-                Users
-              </Nav.Link>
-              <Nav.Link
-                as="span"
-                onClick={() => handleNavClick('Agent')}
-                className={`nav-tab ${activeComponent === 'Agent' ? 'active-tab' : ''}`}
-              >
-                Agents
-              </Nav.Link>
-            </Nav>
-            <Button variant="outline-danger" onClick={handleLogout}>
-              Log Out
-            </Button>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
 
-      <div className="admin-content">
-        {activeComponent === 'dashboard' && <AccordionAdmin />}
-        {activeComponent === 'UserInfo' && <UserInfo />}
-        {activeComponent === 'Agent' && <AgentInfo />}
-      </div>
-    </>
-  );
+
+   const handleNavLinkClick = (componentName) => {
+      setActiveComponent(componentName);
+   };
+
+   const LogOut = () => {
+      localStorage.removeItem('user');
+      navigate('/');
+   };
+
+   return (
+      <>
+         <Navbar className="text-white" bg="dark" expand="lg">
+            <Container fluid>
+               <Navbar.Brand className="text-white" href="#">
+                  Hi Admin {userName}
+               </Navbar.Brand>
+               <Navbar.Toggle aria-controls="navbarScroll" />
+               <Navbar.Collapse id="navbarScroll">
+                  <Nav className="text-white me-auto my-2 my-lg-0" style={{ maxHeight: '100px' }} navbarScroll>
+                     <NavLink
+                        className={`nav-link text-light ${activeComponent === 'dashboard' ? 'active' : ''}`}
+                        onClick={() => handleNavLinkClick('dashboard')}
+                     >
+                        Dashboard
+                     </NavLink>
+                     <NavLink
+                        className={`nav-link text-light ${activeComponent === 'UserInfo' ? 'active' : ''}`}
+                        onClick={() => handleNavLinkClick('UserInfo')}
+                     >
+                        User
+                     </NavLink>
+                     <NavLink
+                        className={`nav-link text-light ${activeComponent === 'Agent' ? 'active' : ''}`}
+                        onClick={() => handleNavLinkClick('Agent')}
+                     >
+                        Agent
+                     </NavLink>
+                  </Nav>
+                  <Button onClick={LogOut} variant="outline-danger">
+                     Log out
+                  </Button>
+               </Navbar.Collapse>
+            </Container>
+         </Navbar>
+         <div className="content">
+            {activeComponent === 'Agent' ? <AgentInfo /> : null}
+            {activeComponent === 'dashboard' ? <AccordionAdmin /> : null}
+            {activeComponent === 'UserInfo' ? <UserInfo /> : null}
+         </div>
+      </>
+   )
+
+
 };
 
 export default AdminHome;
+

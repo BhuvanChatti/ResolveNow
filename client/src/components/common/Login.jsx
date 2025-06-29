@@ -56,9 +56,9 @@ const Login = () => {
 
    return (
       <>
-         <Navbar bg="dark" variant="dark">
+         <Navbar style={{ backgroundColor: '#2e0854' }} variant="dark">
             <Container>
-               <Navbar.Brand>ComplaintCare </Navbar.Brand>
+               <Navbar.Brand>ResolveNow </Navbar.Brand>
                <ul className="navbar-nav">
                   <li className="nav-item mb-2">
                      <Link to={'/'}
@@ -86,11 +86,11 @@ const Login = () => {
                </ul>
             </Container>
          </Navbar>
-         <section className="vh-100 gradient-custom">
+         <section className="gradient-custom login-section">
             <div className="container py-5 h-100">
                <div className="row d-flex justify-content-center align-items-center h-100">
                   <div className="col-12 col-md-8 col-lg-6 col-xl-5">
-                     <div className="card bg-dark text-white">
+                     <div className="card text-white">
                         <div className="card-body p-5 text-center">
                            <div className="mb-md-5 mt-md-4 pb-5">
                               <h2 className="fw-bold mb-4">Login For Registering the Complaint</h2>
