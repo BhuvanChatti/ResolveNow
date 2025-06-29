@@ -9,16 +9,12 @@ import axios from 'axios';
 import Alert from 'react-bootstrap/Alert';
 import Collapse from 'react-bootstrap/Collapse';
 import ChatWindow from '../common/ChatWindow';
-import Footer from '../common/FooterC'
+import Footer from '../common/FooterC';
 
 const AgentHome = () => {
-   const style = {
-      marginTop: '66px',
-   }
-
    const navigate = useNavigate();
    const [userName, setUserName] = useState('');
-   const [toggle, setToggle] = useState({})
+   const [toggle, setToggle] = useState({});
    const [agentComplaintList, setAgentComplaintList] = useState([]);
 
    useEffect(() => {
@@ -29,8 +25,7 @@ const AgentHome = () => {
                const { _id, name } = user;
                setUserName(name);
                const response = await axios.get(`http://localhost:8000/allcomplaints/${_id}`);
-               const complaints = response.data;
-               setAgentComplaintList(complaints);
+               setAgentComplaintList(response.data);
             } else {
                navigate('/');
             }
@@ -47,7 +42,9 @@ const AgentHome = () => {
          await axios.put(`http://localhost:8000/complaint/${complaintId}`, { status: 'completed' });
          setAgentComplaintList((prevComplaints) =>
             prevComplaints.map((complaint) =>
-               complaint._doc.complaintId === complaintId ? { ...complaint, _doc: { ...complaint._doc, status: 'completed' } } : complaint
+               complaint.complaintId === complaintId
+                  ? { ...complaint, status: 'completed' }
+                  : complaint
             )
          );
       } catch (error) {
@@ -69,16 +66,14 @@ const AgentHome = () => {
 
    return (
       <>
-         <div className="body">
-            <Navbar className="text-white" bg="dark" expand="lg">
+         <div className="bg-light min-vh-100">
+            <Navbar bg="dark" variant="dark" expand="lg" fixed="top">
                <Container fluid>
-                  <Navbar.Brand className="text-white">
-                     Hi Agent {userName}
-                  </Navbar.Brand>
+                  <Navbar.Brand>Hi Agent {userName}</Navbar.Brand>
                   <Navbar.Toggle aria-controls="navbarScroll" />
                   <Navbar.Collapse id="navbarScroll">
-                     <Nav className="text-white me-auto my-2 my-lg-0" style={{ maxHeight: '100px' }} navbarScroll>
-                        <NavLink style={{ textDecoration: 'none' }} className="text-white">
+                     <Nav className="me-auto">
+                        <NavLink className="nav-link text-light" to="#">
                            View Complaints
                         </NavLink>
                      </Nav>
@@ -88,53 +83,77 @@ const AgentHome = () => {
                   </Navbar.Collapse>
                </Container>
             </Navbar>
-            <div className="container" style={{ display: 'flex', flexWrap: 'wrap', margin: '20px' }}>
-               {agentComplaintList && agentComplaintList.length > 0 ? (
-                  agentComplaintList.map((complaint, index) => {
-                     const open = toggle[complaint._doc.complaintId] || false;
-                     return (
-                        <Card key={index} style={{ width: '18rem', margin: '15px' }}>
-                           <Card.Body>
-                              <Card.Title><b>Name:</b> {complaint.name}</Card.Title>
-                              <Card.Text><b>Address:</b> {complaint.address}</Card.Text>
-                              <Card.Text><b>City:</b> {complaint.city}</Card.Text>
-                              <Card.Text><b>State:</b> {complaint.state}</Card.Text>
-                              <Card.Text><b>Pincode:</b> {complaint.pincode}</Card.Text>
-                              <Card.Text><b>Comment:</b> {complaint.comment}</Card.Text>
-                              <Card.Text><b>Status:</b> {complaint._doc.status}</Card.Text>
 
-                              {complaint.status !== 'completed' && (
-                                 <Button onClick={() => handleStatusChange(complaint._doc.complaintId)} variant="primary">
-                                    Status Change
-                                 </Button>
-                              )}
-                              <Button onClick={() => handleToggle(complaint._doc.complaintId)}
-                                 aria-controls={`collapse-${complaint._doc.complaintId}`}
-                                 aria-expanded={!open} className='mx-3' variant="primary">
-                                 Message
-                              </Button>
-                              <div>
-                                 <Collapse in={!open} dimension="width">
-                                    <div id="example-collapse-text">
-                                       <Card body style={{ width: '250px', marginTop: '12px' }}>
-                                          <ChatWindow key={complaint._doc.complaintId} complaintId={complaint._doc.complaintId} name={userName} />
-                                       </Card>
-                                    </div>
-                                 </Collapse>
-                              </div>
+            <Container style={{ paddingTop: '90px', paddingBottom: '40px' }}>
+               <div className="row">
+                  {agentComplaintList && agentComplaintList.length > 0 ? (
+                     agentComplaintList.map((complaint, index) => {
+                        const open = toggle[complaint.complaintId] || false;
+                        return (
+                           <div key={index}>
+                              <Card className="h-100 shadow border-0" style={{ backgroundColor: '#f4f7ff' }}>
+                                 <Card.Body>
+                                    <Card.Title className="fw-bold text-primary">{complaint.name}</Card.Title>
+                                    <Card.Text><strong>Address:</strong> {complaint.address}</Card.Text>
+                                    <Card.Text><strong>City:</strong> {complaint.city}</Card.Text>
+                                    <Card.Text><strong>State:</strong> {complaint.state}</Card.Text>
+                                    <Card.Text><strong>Pincode:</strong> {complaint.pincode}</Card.Text>
+                                    <Card.Text><strong>Comment:</strong> {complaint.comment}</Card.Text>
+                                    <Card.Text>
+                                       <strong>Status:</strong>{' '}
+                                       <span className={complaint.status === 'completed' ? 'text-success' : 'text-warning'}>
+                                          {complaint.status}
+                                       </span>
+                                    </Card.Text>
 
-                           </Card.Body>
-                        </Card>
-                     );
-                  })
-               ) : (
-                  <Alert variant="info">
-                     <Alert.Heading>No complaints to show</Alert.Heading>
-                  </Alert>
-               )}
-            </div>
+                                    {complaint.status !== 'completed' && (
+                                       <Button
+                                          onClick={() => handleStatusChange(complaint.complaintId)}
+                                          variant="success"
+                                          className="w-100 mb-2"
+                                       >
+                                          Mark as Completed
+                                       </Button>
+                                    )}
+
+                                    <Button
+                                       onClick={() => handleToggle(complaint.complaintId)}
+                                       aria-controls={`collapse-${complaint.complaintId}`}
+                                       aria-expanded={!open}
+                                       variant="primary"
+                                       className="w-100"
+                                    >
+                                       {open ? 'Hide' : 'Message'}
+                                    </Button>
+
+                                    <Collapse in={!open}>
+                                       <div className="mt-3" id={`collapse-${complaint.complaintId}`}>
+                                          <Card className="bg-white border">
+                                             <Card.Body style={{ padding: '10px' }}>
+                                                <ChatWindow
+                                                   key={complaint.complaintId}
+                                                   complaintId={complaint.complaintId}
+                                                   name={userName}
+                                                />
+                                             </Card.Body>
+                                          </Card>
+                                       </div>
+                                    </Collapse>
+                                 </Card.Body>
+                              </Card>
+                           </div>
+                        );
+                     })
+                  ) : (
+                     <Alert variant="info" className="text-center mt-5">
+                        <Alert.Heading>No complaints to show</Alert.Heading>
+                     </Alert>
+                  )}
+               </div>
+            </Container>
+
+            <Footer style={{ marginTop: '60px' }} />
          </div>
-         <Footer style={style}/>
       </>
    );
 };
