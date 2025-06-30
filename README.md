@@ -1,4 +1,5 @@
 ResolveNow: Your Platform for Online Complaints
+
 ResolveNow is a full-stack web application designed to streamline the process of raising and resolving complaints online. It provides a digital platform for users to register complaints, track progress, and communicate with agents/admins in real-time.
 
 Features:
